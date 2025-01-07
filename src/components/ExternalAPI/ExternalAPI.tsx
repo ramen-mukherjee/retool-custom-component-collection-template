@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, StrictMode, useMemo, type FC } from 'react';
 import styles from './ExternalAPI.module.css';
 
 type Post = {
@@ -8,7 +8,7 @@ type Post = {
   body: string;
 };
 
-export const ExternalAPI: React.FC = () => {
+export const ExternalAPI: FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Post;
@@ -21,7 +21,7 @@ export const ExternalAPI: React.FC = () => {
       .then((data) => setPosts(data));
   }, []);
 
-  const sortedPosts = React.useMemo(() => {
+  const sortedPosts = useMemo(() => {
     const sortablePosts = [...posts];
     if (sortConfig !== null) {
       sortablePosts.sort((a, b) => {
@@ -49,28 +49,48 @@ export const ExternalAPI: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
+  const getSortIndicator = (key: keyof Post) => {
+    if (!sortConfig) {
+      return null;
+    }
+    if (sortConfig.key === key) {
+      return sortConfig.direction === 'ascending' ? '↑' : '↓';
+    }
+    return null;
+  };
+
   return (
-    <div className={styles.container}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th onClick={() => requestSort('userId')}>User ID</th>
-            <th onClick={() => requestSort('id')}>ID</th>
-            <th onClick={() => requestSort('title')}>Title</th>
-            <th onClick={() => requestSort('body')}>Body</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedPosts.map((post) => (
-            <tr key={post.id}>
-              <td>{post.userId}</td>
-              <td>{post.id}</td>
-              <td>{post.title}</td>
-              <td>{post.body}</td>
+    <StrictMode>
+      <div className={styles.container}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th onClick={() => requestSort('userId')}>
+                User ID {getSortIndicator('userId')}
+              </th>
+              <th onClick={() => requestSort('id')}>
+                ID {getSortIndicator('id')}
+              </th>
+              <th onClick={() => requestSort('title')}>
+                Title {getSortIndicator('title')}
+              </th>
+              <th onClick={() => requestSort('body')}>
+                Body {getSortIndicator('body')}
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {sortedPosts.map((post) => (
+              <tr key={post.id}>
+                <td>{post.userId}</td>
+                <td>{post.id}</td>
+                <td>{post.title}</td>
+                <td>{post.body}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </StrictMode>
   );
 };

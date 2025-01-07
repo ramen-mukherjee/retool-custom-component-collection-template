@@ -1,1 +1,1 @@
-export { ExternalAPI, SimpleText } from './components';
+export { ExternalAPI, SimpleText, WebSocketComponent } from './components';
