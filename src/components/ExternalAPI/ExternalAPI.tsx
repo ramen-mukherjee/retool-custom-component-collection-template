@@ -62,6 +62,10 @@ export const ExternalAPI: FC = () => {
   return (
     <StrictMode>
       <div className={styles.container}>
+        <div className={styles.title}>
+          <h6>Using External API</h6>
+        </div>
+
         <table className={styles.table}>
           <thead>
             <tr>
